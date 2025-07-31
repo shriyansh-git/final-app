@@ -16,7 +16,9 @@ router.get('/profile/:id', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const posts = await Post.find({ user: user._id }).sort({ createdAt: -1 });
+    const posts = await Post.find({ user: user._id })
+      .select('title description imageUrl') // ✅ corrected field
+      .sort({ createdAt: -1 });
 
     res.json({
       user,
@@ -30,7 +32,7 @@ router.get('/profile/:id', async (req, res) => {
   }
 });
 
-// 🔹 Follow a user
+// Follow a user
 router.post('/:id/follow', isAuthenticated, async (req, res) => {
   try {
     const userToFollow = await User.findById(req.params.id);
@@ -53,7 +55,7 @@ router.post('/:id/follow', isAuthenticated, async (req, res) => {
   }
 });
 
-// 🔹 Unfollow a user
+// Unfollow a user
 router.post('/:id/unfollow', isAuthenticated, async (req, res) => {
   try {
     const userToUnfollow = await User.findById(req.params.id);
